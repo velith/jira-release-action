@@ -1,0 +1,45 @@
+name: Deployment Workflow
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types: [closed]
+    branches:
+      - master
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_VERSION: "0.1.0"
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - name: login
+      uses: docker/login-action@v1
+      with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Docker meta
+      id: meta
+      uses: docker/metadata-action@v3
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+    - name: build-push
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        push: true
+        tags: "${{ steps.meta.outputs.tags }}:v${{ env.IMAGE_VERSION }}"
+        labels: "${{ steps.meta.outputs.labels }}"

@@ -22,7 +22,7 @@ jobs:
       - name: 'Tag version'
         ## Tag version control
       - name: 'Jira release'
-        uses: velith/jira-release-action@master
+        uses: velith/jira-release-action@v1
         with:
           jira_project_key: "MYPROJ"
           jira_version: "1.1.x"

@@ -1,0 +1,19 @@
+name: 'Jira Release Action'
+description: 'Creates a release in Jira for a version'
+author: 'velith'
+inputs:
+  jira_project_key:
+    description: 'Project key for the Jira project'
+    required: true
+  jira_version:
+    descritpion: 'Version name to release in Jira'
+    required: true
+  jira_hostname:
+    description: 'Hostname for the Jira server'
+    required: true
+  jira_release_version:
+    description: 'Optional name for the version to change before release'
+    required: false
+runs:
+  using: 'docker'
+  image: 'docker://ghcr.io/velith/jira-release-action:v0.1.0'

@@ -26,7 +26,7 @@ if [ -z "${TOKEN}" ]; then
   exit 1
 fi
 
-if [ "${INPUT_JIRA_RELEASE_VERSION}" != "" ]; then
+if [ -n "${INPUT_JIRA_RELEASE_VERSION}" ]; then
   export JIRA_RELEASE_VERSION="${INPUT_JIRA_RELEASE_VERSION}"
 fi
 

@@ -36,7 +36,6 @@ def _get_version_id():
 
 def _update_version(version_id, release_version):
   jira_host = os.environ.get(HOSTNAME)
-  project_key = os.environ.get(PROJECT)
 
   url = f"https://{jira_host}/rest/api/2/version/{version_id}"
   

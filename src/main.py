@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 import requests
@@ -43,10 +44,10 @@ def _update_version(version_id, release_version):
     "Authorization": f"Bearer {os.environ[API_TOKEN]}"
   }
 
-  payload = {
-    "name":f"{release_version}",
+  payload = json.dumps({
+    "name": release_version,
     "released": True
-  }
+  })
 
   return requests.put(url, 
                       headers=headers,

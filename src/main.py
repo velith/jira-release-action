@@ -11,19 +11,19 @@ RELEASE_VERSION = "JIRA_RELEASE_VERSION"
 
 def _check_env_vars(vars):
   for var in vars:
-    if not os.environ[var]:
+    if not os.environ.get(var):
       logging.exception(f"Required env var '{var}' not set")
       exit(1)
 
 def _get_version_id():
-  jira_host = os.environ[HOSTNAME]
-  project_key = os.environ[PROJECT]
-  version_name = os.environ[VERSION]
+  jira_host = os.environ.get(HOSTNAME)
+  project_key = os.environ.get(PROJECT)
+  version_name = os.environ.get(VERSION)
 
   url = f"https://{jira_host}/rest/api/2/project/{project_key}/versions?expand=name,id"
 
   headers = {
-    "Authorization": f"Bearer {os.environ[API_TOKEN]}"
+    "Authorization": f"Bearer {os.environ.get(API_TOKEN)}"
   }
 
   versions = requests.get(url, headers=headers).json()
@@ -35,13 +35,13 @@ def _get_version_id():
   return None
 
 def _update_version(version_id, release_version):
-  jira_host = os.environ[HOSTNAME]
-  project_key = os.environ[PROJECT]
+  jira_host = os.environ.get(HOSTNAME)
+  project_key = os.environ.get(PROJECT)
 
   url = f"https://{jira_host}/rest/api/2/version/{version_id}"
   
   headers = {
-    "Authorization": f"Bearer {os.environ[API_TOKEN]}"
+    "Authorization": f"Bearer {os.environ.get(API_TOKEN)}"
   }
 
   payload = json.dumps({
@@ -55,7 +55,7 @@ def _update_version(version_id, release_version):
                       ).json()
 
 def _release_version(version_id):
-  _update_version(version_id, os.environ[VERSION])
+  _update_version(version_id, os.environ.get(VERSION))
 
 def main(request):
   _check_env_vars([API_TOKEN, PROJECT, VERSION, HOSTNAME])
@@ -63,8 +63,8 @@ def main(request):
   version_id = _get_version_id()
 
   if version_id:
-    if os.environ[RELEASE_VERSION]:
-      _update_version(version_id, os.environ[RELEASE_VERSION])
+    if os.environ.get(RELEASE_VERSION):
+      _update_version(version_id, os.environ.get(RELEASE_VERSION))
     else:
       _release_version(version_id)
   else:

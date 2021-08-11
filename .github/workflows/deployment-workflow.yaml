@@ -22,16 +22,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Docker meta
-      id: meta
-      uses: docker/metadata-action@v3
-      with:
-        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-
     - name: build-push
       uses: docker/build-push-action@v2
       with:
         context: .
         push: true
-        tags: "${{ steps.meta.outputs.tags }}:v${{ env.IMAGE_VERSION }}"
+        tags: "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:v${{ env.IMAGE_VERSION }}"
         labels: "${{ steps.meta.outputs.labels }}"

@@ -40,7 +40,9 @@ def _update_version(version_id, release_version):
   url = f"https://{jira_host}/rest/api/2/version/{version_id}"
   
   headers = {
-    "Authorization": f"Bearer {os.environ.get(API_TOKEN)}"
+    "Authorization": f"Bearer {os.environ.get(API_TOKEN)}",
+    "Content-Type": "application/json",
+    "Accept": "application/json"
   }
 
   payload = json.dumps({
@@ -51,7 +53,7 @@ def _update_version(version_id, release_version):
   return requests.put(url, 
                       headers=headers,
                       data=payload
-                      ).json()
+                      )
 
 def _release_version(version_id):
   _update_version(version_id, os.environ.get(VERSION))

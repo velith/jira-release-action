@@ -43,7 +43,7 @@ def _update_version(version_id, release_version):
   }
 
   payload = {
-    "name":f"{release_version}"
+    "name":f"{release_version}",
     "released": True
   }
 

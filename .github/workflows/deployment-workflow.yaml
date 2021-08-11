@@ -4,23 +4,15 @@ on:
   push:
     branches:
       - master
-  pull_request:
-    types: [closed]
-    branches:
-      - master
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  IMAGE_VERSION: "0.1.0"
+  IMAGE_VERSION: "0.1.1"
 
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      packages: write
 
     steps:
     - name: login

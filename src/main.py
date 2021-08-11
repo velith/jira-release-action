@@ -2,10 +2,11 @@ import logging
 import os
 import requests
 
-API_TOKEN  = "TOKEN"
-PROJECT    = "JIRA_PROJECT_KEY"
-VERSION    = "JIRA_VERSION"
-HOSTNAME   = "JIRA_HOSTNAME"
+API_TOKEN       = "TOKEN"
+PROJECT         = "JIRA_PROJECT_KEY"
+VERSION         = "JIRA_VERSION"
+HOSTNAME        = "JIRA_HOSTNAME"
+RELEASE_VERSION = "JIRA_RELEASE_VERSION"
 
 def _check_env_vars(vars):
   for var in vars:
@@ -61,8 +62,8 @@ def main(request):
   version_id = _get_version_id()
 
   if version_id:
-    if os.environ[JIRA_RELEASE_VERSION]:
-      _update_version(version_id, os.environ[JIRA_RELEASE_VERSION])
+    if os.environ[RELEASE_VERSION]:
+      _update_version(version_id, os.environ[RELEASE_VERSION])
     else:
       _release_version(version_id)
   else:

@@ -3,7 +3,7 @@ import os
 import requests
 
 API_TOKEN  = "TOKEN"
-PROJECT    = "JIRA_PROJECT"
+PROJECT    = "JIRA_PROJECT_KEY"
 VERSION    = "JIRA_VERSION"
 HOSTNAME   = "JIRA_HOSTNAME"
 

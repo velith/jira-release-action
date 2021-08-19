@@ -38,15 +38,16 @@ def _close_issues(version_id):
   jira_host = os.environ.get(HOSTNAME)
 
   headers = {
-      "Authorization": f"Bearer {os.environ.get(API_TOKEN)}",
-      "Accept": "application/json",
-    }
+    "Authorization": f"Bearer {os.environ.get(API_TOKEN)}",
+    "Accept": "application/json",
+    "Content-Type": "application/json"
+  }
 
   url = f"https://{jira_host}/rest/api/2/search"
 
   query = {
     "jql": f"project = COAPP AND status = 'Ready for release' AND fixVersion = {version_id}",
-    "fields": ""
+    "fields": "id"
   }
 
   issue_search = requests.get(
@@ -57,7 +58,7 @@ def _close_issues(version_id):
 
   payload = json.dumps({
     "transition": {
-      "id": "71" # Done
+      "id": "71"
     }
   })
 

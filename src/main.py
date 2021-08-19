@@ -107,7 +107,7 @@ def _create_new_version(version):
   }
 
   payload = json.dumps({
-    "name": version,
+    "name": f"{str(version).rsplit('.', 1)}.xyz",
     "project": os.environ.get(PROJECT)
   })
 
@@ -122,7 +122,7 @@ def main(request):
     _close_issues(os.environ.get(VERSION))
     if os.environ.get(RELEASE_VERSION):
       _release_and_update_version(version_id, os.environ.get(RELEASE_VERSION))
-      _create_new_version(os.environ.get(VERSION))
+      _create_new_version(os.environ.get(RELEASE_VERSION))
     else:
       _release_version(version_id)
   else:

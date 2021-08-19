@@ -34,7 +34,7 @@ def _get_version_id():
 
   return None
 
-def _close_issues(version_id):
+def _close_issues(version):
   jira_host = os.environ.get(HOSTNAME)
 
   headers = {
@@ -46,7 +46,7 @@ def _close_issues(version_id):
   url = f"https://{jira_host}/rest/api/2/search"
 
   query = {
-    "jql": f"project = COAPP AND status = 'Ready for release' AND fixVersion = {version_id}",
+    "jql": f"project = COAPP AND status = 'Ready for release' AND fixVersion = {version}",
     "fields": "id"
   }
 
@@ -95,7 +95,7 @@ def _release_and_update_version(version_id, release_version):
 def _release_version(version_id):
   return _release_and_update_version(version_id, os.environ.get(VERSION))
 
-def _create_new_version(version_id):
+def _create_new_version(version):
   jira_host = os.environ.get(HOSTNAME)
 
   url = f"https://{jira_host}/rest/api/2/version"
@@ -107,7 +107,7 @@ def _create_new_version(version_id):
   }
 
   payload = json.dumps({
-    "name": version_id,
+    "name": version,
     "project": os.environ.get(PROJECT)
   })
 
@@ -119,10 +119,10 @@ def main(request):
   version_id = _get_version_id()
 
   if version_id:
-    _close_issues(version_id)
+    _close_issues(os.environ.get(VERSION))
     if os.environ.get(RELEASE_VERSION):
       _release_and_update_version(version_id, os.environ.get(RELEASE_VERSION))
-      _create_new_version(version_id)
+      _create_new_version(os.environ.get(VERSION))
     else:
       _release_version(version_id)
   else:

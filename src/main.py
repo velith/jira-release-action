@@ -107,7 +107,7 @@ def _create_new_version(version):
   }
 
   payload = json.dumps({
-    "name": f"{str(version).rsplit('.', 1)}.xyz",
+    "name": f"{str(version).rsplit('.', 1)[0]}.xyz",
     "project": os.environ.get(PROJECT)
   })
 

@@ -42,7 +42,7 @@ def _close_issues(version_id):
       "Accept": "application/json",
     }
 
-  url = f"{jira_host}/rest/api/2/search?"
+  url = f"https://{jira_host}/rest/api/2/search"
 
   query = {
     "jql": f"project = COAPP AND status = 'Ready for release' AND fixVersion = {version_id}",
@@ -62,7 +62,7 @@ def _close_issues(version_id):
   })
 
   for issue in issue_search["issues"]:
-    url = f"{jira_host}/rest/api/2/issue/{issue['id']}/transitions"
+    url = f"https://{jira_host}/rest/api/2/issue/{issue['id']}/transitions"
     requests.post(
       url,
       headers=headers,

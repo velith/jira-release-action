@@ -120,10 +120,10 @@ def main(request):
   if version_id:
     _close_issues(version_id)
     if os.environ.get(RELEASE_VERSION):
-      version_id = _release_and_update_version(version_id, os.environ.get(RELEASE_VERSION))
+      _release_and_update_version(version_id, os.environ.get(RELEASE_VERSION))
+      _create_new_version(version_id)
     else:
-      version_id = _release_version(version_id)
-    _create_new_version(version_id)
+      _release_version(version_id)
   else:
     logging.info("No version updated or released")
 

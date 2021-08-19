@@ -107,7 +107,8 @@ def _create_new_version(version_id):
   }
 
   payload = json.dumps({
-    "name": f"{version_id.rsplit('.', 1)[0]}.xyz"
+    "name": version_id,
+    "project": os.environ.get(PROJECT)
   })
 
   return requests.post(url, headers=headers, data=payload)

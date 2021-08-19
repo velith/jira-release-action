@@ -34,6 +34,45 @@ def _get_version_id():
 
   return None
 
+def _close_issues(version_id):
+  jira_host = os.environ.get(HOSTNAME)
+
+  headers = {
+      "Authorization": f"Bearer {os.environ.get(API_TOKEN)}",
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    }
+
+  url = f"{jira_host}/rest/api/2/search"
+
+  jql = f"project = COAPP AND status = 'Ready for release' AND fixVersion = {version_id}"
+  fields=""
+
+  query = {
+    "jql": jql,
+    "fields": fields
+  }
+
+  issue_search = requests.get(
+    url,
+    headers=headers,
+    params=query
+  ).json()
+
+  payload = json.dumps({
+    "transition": {
+      "id": "71" # Done
+    }
+  })
+
+  for issue in issue_search["issues"]:
+    url = f"{jira_host}/rest/api/2/issue/{issue['id']}/transitions"
+    requests.post(
+      url,
+      headers=headers,
+      data=payload
+    )
+
 def _update_version(version_id, release_version):
   jira_host = os.environ.get(HOSTNAME)
 
@@ -58,6 +97,23 @@ def _update_version(version_id, release_version):
 def _release_version(version_id):
   _update_version(version_id, os.environ.get(VERSION))
 
+def _create_new_version(version_id):
+  jira_host = os.environ.get(HOSTNAME)
+
+  url = f"https://{jira_host}/rest/api/2/version"
+
+  headers = {
+    "Authorization": f"Bearer {os.environ.get(API_TOKEN)}",
+    "Content-Type": "application/json",
+    "Accept": "application/json"
+  }
+
+  payload = json.dumps({
+    "name": f"{version_id.rsplit('.', 1)[0]}.xyz"
+  })
+
+  return requests.post(url, headers=headers, data=payload)
+
 def main(request):
   _check_env_vars([API_TOKEN, PROJECT, VERSION, HOSTNAME])
 
@@ -68,6 +124,8 @@ def main(request):
       _update_version(version_id, os.environ.get(RELEASE_VERSION))
     else:
       _release_version(version_id)
+    _close_issues(version_id)
+    _create_new_version(version_id)
   else:
     logging.info("No version updated or released")
 

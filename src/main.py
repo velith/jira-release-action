@@ -40,17 +40,13 @@ def _close_issues(version_id):
   headers = {
       "Authorization": f"Bearer {os.environ.get(API_TOKEN)}",
       "Accept": "application/json",
-      "Content-Type": "application/json"
     }
 
   url = f"{jira_host}/rest/api/2/search"
 
-  jql = f"project = COAPP AND status = 'Ready for release' AND fixVersion = {version_id}"
-  fields=""
-
   query = {
-    "jql": jql,
-    "fields": fields
+    "jql": f"project = COAPP AND status = 'Ready for release' AND fixVersion = {version_id}",
+    "fields": ""
   }
 
   issue_search = requests.get(

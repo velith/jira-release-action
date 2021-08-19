@@ -42,7 +42,7 @@ def _close_issues(version_id):
       "Accept": "application/json",
     }
 
-  url = f"{jira_host}/rest/api/2/search"
+  url = f"{jira_host}/rest/api/2/search?"
 
   query = {
     "jql": f"project = COAPP AND status = 'Ready for release' AND fixVersion = {version_id}",

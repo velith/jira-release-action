@@ -30,6 +30,15 @@ if [ -n "${INPUT_JIRA_RELEASE_VERSION}" ]; then
   export JIRA_RELEASE_VERSION="${INPUT_JIRA_RELEASE_VERSION}"
 fi
 
+if [ -n "${INPUT_JIRA_TRANSITION_ID}" ]; then
+  export JIRA_TRANSITION_ID="${INPUT_JIRA_TRANSITION_ID}"
+fi
+
+if [ -n "${INPUT_JIRA_STATUS_NAME}" ]; then
+  export JIRA_STATUS_NAME="${INPUT_JIRA_STATUS_NAME}"
+fi
+
+
 scriptDir=$(dirname ${0})
 output=$(python ${scriptDir}/main.py ${*} 2>&1)
 exitCode=${?}

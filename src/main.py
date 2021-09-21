@@ -8,6 +8,8 @@ PROJECT         = "JIRA_PROJECT_KEY"
 VERSION         = "JIRA_VERSION"
 HOSTNAME        = "JIRA_HOSTNAME"
 RELEASE_VERSION = "JIRA_RELEASE_VERSION"
+TRANSITION_ID   = "JIRA_TRANSITION_ID"
+STATUS_NAME     = "JIRA_STATUS_NAME"
 
 def _check_env_vars(vars):
   for var in vars:
@@ -35,6 +37,10 @@ def _get_version_id():
   return None
 
 def _close_issues(version):
+  if not (os.environ.get(STATUS_NAME) and os.environ.get(TRANSITION_ID)):
+    logging.info("Status name and/or transition not provided. Not updating any Jira issues.")
+    return ""
+
   jira_host = os.environ.get(HOSTNAME)
 
   headers = {
@@ -46,7 +52,7 @@ def _close_issues(version):
   url = f"https://{jira_host}/rest/api/2/search"
 
   query = {
-    "jql": f"project = COAPP AND status = 'Ready for release' AND fixVersion = {version}",
+    "jql": f"project = {os.environ.get(PROJECT)} AND status = '{os.environ.get(STATUS_NAME)}' AND fixVersion = {version}",
     "fields": "id"
   }
 
@@ -58,7 +64,7 @@ def _close_issues(version):
 
   payload = json.dumps({
     "transition": {
-      "id": "71"
+      "id": os.environ.get(TRANSITION_ID)
     }
   })
 

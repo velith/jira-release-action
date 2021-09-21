@@ -26,7 +26,6 @@ jobs:
         with:
           jira_project_key: "MYPROJ"
           jira_version: "1.1.x"
-          jira_release_version: "1.1.15"
           jira_hostname: "jira.example.com"
         env:
           TOKEN: ${{ secrets.JIRA_TOKEN }}
@@ -42,6 +41,8 @@ Inputs configure Terraform GitHub Actions to perform different actions.
 * `jira_version` - (Required) Version to be released.
 * `jira_hostanme` - (Required) Hostname of the Jira software.
 * `jira_release_version` - (Optional) A new name for the version to be released.
+* `jira_status_name` - (Optional) Name for Jira status of issues that are about to be released.
+* `jira_transition_id` - (Optional) ID for status to transition Jira issues during release. Must be provided together with `jira_status_name`
 
 ## Outputs
 

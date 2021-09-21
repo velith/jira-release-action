@@ -14,6 +14,9 @@ inputs:
   jira_release_version:
     description: 'Optional name for the version to change before release'
     required: false
+  jira_transition_id:
+    description: 'Optionally transition Jira ticket in release to this transition id'
+    required: false
 runs:
   using: 'docker'
-  image: 'docker://ghcr.io/velith/jira-release-action:v0.1.11'
+  image: 'docker://ghcr.io/velith/jira-release-action:v0.2.0'

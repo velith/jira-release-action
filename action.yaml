@@ -17,6 +17,9 @@ inputs:
   jira_transition_id:
     description: 'Optionally transition Jira ticket in release to this transition id'
     required: false
+  jira_status_name:
+    description: 'Transitions issues that have this Jira status (only required if transition id provided)'
+    required: false
 runs:
   using: 'docker'
-  image: 'docker://ghcr.io/velith/jira-release-action:v0.2.0'
+  image: 'docker://ghcr.io/velith/jira-release-action:v0.2.1'

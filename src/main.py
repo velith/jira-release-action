@@ -91,13 +91,13 @@ def _release_and_update_version(version_id, release_version):
 
   today = date.today()
   releaseDate = today.strftime("%Y-%m-%d")
-  userDate = today.strftime("%d/%b/%Y").lower()
+  userReleaseDate = today.strftime("%d/%b/%Y").lower()
 
   payload = json.dumps({
     "name": release_version,
     "released": True,
     "releaseDate": releaseDate,
-    "userDate": userDate
+    "userReleaseDate": userReleaseDate
   })
 
   requests.put(url, 

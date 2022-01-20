@@ -3,6 +3,8 @@ import logging
 import os
 import requests
 
+from datetime import date
+
 API_TOKEN       = "TOKEN"
 PROJECT         = "JIRA_PROJECT_KEY"
 VERSION         = "JIRA_VERSION"
@@ -87,9 +89,15 @@ def _release_and_update_version(version_id, release_version):
     "Accept": "application/json"
   }
 
+  today = date.today()
+  releaseDate = today.strftime("%Y-%m-%d")
+  userDate = today.strftime("%d/%b/%Y").lower()
+
   payload = json.dumps({
     "name": release_version,
-    "released": True
+    "released": True,
+    "releaseDate": releaseDate,
+    "userDate": userDate
   })
 
   requests.put(url, 

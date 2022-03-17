@@ -1,3 +1,4 @@
+from cmath import log
 import json
 import logging
 import os
@@ -36,6 +37,7 @@ def _get_version_id():
     if version["name"] == version_name:
       return version["id"]
 
+  logging.info(f"No version found in project {project_key} with name ${version_name}")
   return None
 
 def _close_issues(version):
@@ -44,6 +46,8 @@ def _close_issues(version):
     return ""
 
   jira_host = os.environ.get(HOSTNAME)
+  project_key = os.environ.get(PROJECT)
+  status = os.environ.get(STATUS_NAME)
 
   headers = {
     "Authorization": f"Bearer {os.environ.get(API_TOKEN)}",
@@ -54,7 +58,7 @@ def _close_issues(version):
   url = f"https://{jira_host}/rest/api/2/search"
 
   query = {
-    "jql": f"project = {os.environ.get(PROJECT)} AND status = '{os.environ.get(STATUS_NAME)}' AND fixVersion = {version}",
+    "jql": f"project = {project_key} AND status = '{status}' AND fixVersion = {version}",
     "fields": "id"
   }
 
@@ -63,6 +67,12 @@ def _close_issues(version):
     headers=headers,
     params=query
   ).json()
+
+  if not issue_search:
+    logging.warning(f"No issues found for '{project_key}' with status '{status}' and version '{version}'")
+    exit(0)
+
+  logging.info(f"Found {len(issue_search['issues'])} issues")
 
   payload = json.dumps({
     "transition": {
@@ -100,10 +110,14 @@ def _release_and_update_version(version_id, release_version):
     "userReleaseDate": userReleaseDate
   })
 
-  requests.put(url, 
+  res = requests.put(url,
                   headers=headers,
                   data=payload
                   )
+
+  if res.status_code != 200:
+    logging.warning(f"Failed to update and release Jira version {release_version}")
+
   return release_version
 
 def _release_version(version_id):
@@ -120,10 +134,16 @@ def _create_new_version(version):
     "Accept": "application/json"
   }
 
+  placeholder_version = f"{str(version).rsplit('.', 1)[0]}.xyz"
+
   payload = json.dumps({
-    "name": f"{str(version).rsplit('.', 1)[0]}.xyz",
+    "name": placeholder_version,
     "project": os.environ.get(PROJECT)
   })
+
+  res = requests.post(url, headers=headers, data=payload)
+  if res.status_code != 200:
+    logging.warning(f"Failed to create new placeholder verions {placeholder_version}")
 
   return requests.post(url, headers=headers, data=payload)
 

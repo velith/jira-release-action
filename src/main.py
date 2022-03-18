@@ -82,11 +82,16 @@ def _close_issues(version):
 
   for issue in issue_search["issues"]:
     url = f"https://{jira_host}/rest/api/2/issue/{issue['id']}/transitions"
-    requests.post(
+    res = requests.post(
       url,
       headers=headers,
       data=payload
     )
+    if res.status_code == 200:
+      logging.info(f"Moved {issue['id']} to Done")
+    else:
+      logging.warning(f"Could not move {issue['id']} to Done")
+      logging.warning(json.loads(res.text))
 
 def _release_and_update_version(version_id, release_version):
   jira_host = os.environ.get(HOSTNAME)
@@ -101,13 +106,11 @@ def _release_and_update_version(version_id, release_version):
 
   today = date.today()
   releaseDate = today.strftime("%Y-%m-%d")
-  userReleaseDate = today.strftime("%Y-%b-%d")
 
   payload = json.dumps({
     "name": release_version,
     "released": "true",
-    "releaseDate": releaseDate,
-    "userReleaseDate": userReleaseDate
+    "releaseDate": releaseDate
   })
 
   res = requests.put(url,
@@ -117,6 +120,7 @@ def _release_and_update_version(version_id, release_version):
 
   if res.status_code != 200:
     logging.warning(f"Failed to update and release Jira version {release_version}")
+    logging.warning(json.loads(res.text))
 
   return release_version
 
@@ -144,6 +148,7 @@ def _create_new_version(version):
   res = requests.post(url, headers=headers, data=payload)
   if res.status_code != 200:
     logging.warning(f"Failed to create new placeholder verions {placeholder_version}")
+    logging.warning(json.loads(res.text))
 
   return requests.post(url, headers=headers, data=payload)
 

@@ -87,7 +87,7 @@ def _close_issues(version):
       headers=headers,
       data=payload
     )
-    if res.status_code == 200:
+    if res.status_code in [200, 204]:
       logging.info(f"Moved {issue['id']} to Done")
     else:
       logging.warning(f"Could not move {issue['id']} to Done")
@@ -118,7 +118,7 @@ def _release_and_update_version(version_id, release_version):
                   data=payload
                   )
 
-  if res.status_code != 200:
+  if res.status_code not in [200, 204]:
     logging.warning(f"Failed to update and release Jira version {release_version}")
     logging.warning(json.loads(res.text))
 
@@ -146,7 +146,7 @@ def _create_new_version(version):
   })
 
   res = requests.post(url, headers=headers, data=payload)
-  if res.status_code != 200:
+  if res.status_code not in [200, 204]:
     logging.warning(f"Failed to create new placeholder verions {placeholder_version}")
     logging.warning(json.loads(res.text))
 

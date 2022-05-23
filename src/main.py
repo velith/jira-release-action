@@ -34,7 +34,7 @@ def _get_version_id():
   versions = requests.get(url, headers=headers).json()
 
   for version in versions:
-    if version["name"] == version_name:
+    if "name" in version and version["name"] == version_name:
       return version["id"]
 
   logging.info(f"No version found in project {project_key} with name ${version_name}")

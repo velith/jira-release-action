@@ -32,13 +32,19 @@ def _get_version_id():
     "Authorization": f"Bearer {os.environ.get(API_TOKEN)}"
   }
 
-  versions = requests.get(url, headers=headers).json()
+  version_req = requests.get(url, headers=headers)
+
+  if not version_req or version_req.status_code != 200:
+    logging.error(f"Error with getting versions: {version_req.text}")
+    return None
+
+  versions = version_req.json()
 
   for version in versions:
     if "name" in version and version["name"] == version_name:
       return version["id"]
 
-  logging.info(f"No version found in project {project_key} with name ${version_name}")
+  logging.info(f"No version found in project '{project_key}' with name '{version_name}'")
   return None
 
 def _close_issues(version):
@@ -67,13 +73,19 @@ def _close_issues(version):
     url,
     headers=headers,
     params=query
-  ).json()
+  )
 
-  if not issue_search:
+  if not issue_search or issue_search.status_code != 200:
+    logging.error(f"Error in issue search: {issue_search.text}")
+    return ""
+
+  issues_json = issue_search.json()
+
+  if not issues_json:
     logging.warning(f"No issues found for '{project_key}' with status '{status}' and version '{version}'")
     return ""
 
-  logging.info(f"Found {len(issue_search['issues'])} issues")
+  logging.info(f"Found {len(issues_json['issues'])} issues")
 
   payload = json.dumps({
     "transition": {
@@ -81,7 +93,7 @@ def _close_issues(version):
     }
   })
 
-  for issue in issue_search["issues"]:
+  for issue in issues_json["issues"]:
     url = f"https://{jira_host}/rest/api/2/issue/{issue['id']}/transitions"
     res = requests.post(
       url,

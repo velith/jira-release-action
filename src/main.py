@@ -71,7 +71,7 @@ def _close_issues(version):
 
   if not issue_search:
     logging.warning(f"No issues found for '{project_key}' with status '{status}' and version '{version}'")
-    exit(0)
+    return ""
 
   logging.info(f"Found {len(issue_search['issues'])} issues")
 

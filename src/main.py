@@ -156,10 +156,11 @@ def _create_new_version(version):
 def main(request):
   _check_env_vars([API_TOKEN, PROJECT, VERSION, HOSTNAME])
 
+  _close_issues(os.environ.get(VERSION))
+
   version_id = _get_version_id()
 
   if version_id:
-    _close_issues(os.environ.get(VERSION))
     if os.environ.get(RELEASE_VERSION):
       _release_and_update_version(version_id, os.environ.get(RELEASE_VERSION))
       _create_new_version(os.environ.get(RELEASE_VERSION))

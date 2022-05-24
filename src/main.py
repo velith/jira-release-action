@@ -13,6 +13,8 @@ RELEASE_VERSION = "JIRA_RELEASE_VERSION"
 TRANSITION_ID   = "JIRA_TRANSITION_ID"
 STATUS_NAME     = "JIRA_STATUS_NAME"
 
+logging.basicConfig(level = logging.INFO)
+
 def _check_env_vars(vars):
   for var in vars:
     if not os.environ.get(var):

@@ -101,13 +101,14 @@ def _close_issues(version):
       data=payload
     )
     if res.status_code in [200, 204]:
-      logging.info(f"Moved {issue['id']} to Done")
+      logging.info(f"Moved {issue['key']} to Done")
     else:
-      logging.warning(f"Could not move {issue['id']} to Done")
+      logging.warning(f"Could not move {issue['key']} to Done")
       logging.warning(json.loads(res.text))
 
 def _release_and_update_version(version_id, release_version):
   jira_host = os.environ.get(HOSTNAME)
+  placeholder_version_name = os.environ.get(VERSION)
 
   url = f"https://{jira_host}/rest/api/2/version/{version_id}"
   
@@ -134,6 +135,8 @@ def _release_and_update_version(version_id, release_version):
   if res.status_code not in [200, 204]:
     logging.warning(f"Failed to update and release Jira version {release_version}")
     logging.warning(json.loads(res.text))
+  else:
+    logging.info(f"Released Jira version {placeholder_version_name} as {release_version}")
 
   return release_version
 
@@ -160,10 +163,8 @@ def _create_new_version(version):
 
   res = requests.post(url, headers=headers, data=payload)
   if res.status_code not in [200, 204]:
-    logging.warning(f"Failed to create new placeholder verions {placeholder_version}")
+    logging.warning(f"Failed to create new placeholder version {placeholder_version}")
     logging.warning(json.loads(res.text))
-
-  return requests.post(url, headers=headers, data=payload)
 
 def main(request):
   _check_env_vars([API_TOKEN, PROJECT, VERSION, HOSTNAME])
